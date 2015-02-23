@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="camel-kie-example">
+
+	<repository>mvn:org.apache.camel.karaf/apache-camel/${camel.version}/xml/features</repository>
+	<repository>mvn:org.drools/drools-karaf-features/6.0.3-redhat-6/xml/features</repository>
+    
+	<!-- ======== YOUR ROUTES ======== -->
+    <feature name="billing-service" resolver='(obr)' version="${pom.version}">
+		<feature>camel-kie-component</feature>
+		<bundle>mvn:com.redhat.quickstarts.brms6fuse.contracts/billing-service-contract/${pom.version}</bundle>
+		<bundle>mvn:com.redhat.quickstarts.brms6fuse.services/billing-service/${pom.version}</bundle>
+	</feature>
+	
+	
+	<!-- ======== CAMEL-KIE COMPONENT ======== -->
+	<feature name="camel-kie-component" resolver='(obr)' version="${pom.version}">
+		<feature>camel-core</feature>
+		<feature>camel-blueprint</feature>
+		<feature>drools-module</feature>
+		<bundle>mvn:com.redhat.fuse/camel-kie/${pom.version}</bundle>
+	</feature>
+
+</features>

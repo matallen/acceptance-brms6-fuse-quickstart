@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<!--
+	I DONT KNOW WHY BUT I HAD TO SEVER THE PARENT ASSOCIATION OTHERWISE THE CAMEL ROUTE WOULDNT START!!!! WEIRD HUH!?
+	I now realise its the kie-BOM that is causing the issue - camel tests fail when the kie-bom is imported
+	-->
+    <parent>
+	    <groupId>com.redhat.quickstarts.brms6fuse</groupId>
+	    <artifactId>services</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <groupId>com.redhat.quickstarts.brms6fuse.services</groupId>
+	<artifactId>billing-service</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>bundle</packaging>
+	<name>${project.groupId}.${project.artifactId}</name>
+
+    <!--
+    <fuse>etc/edit org.ops4j.pax.url.mvn.cfg
+    add this repo to the end of the property "org.ops4j.pax.url.mvn.repositories"
+        https://maven.repository.redhat.com/techpreview/all@id=drools.repo
+    
+    ===========
+    features:removeurl  mvn:com.redhat.fuse/camel-kie-example-features/1.0-SNAPSHOT/xml/features
+    features:addurl mvn:com.redhat.fuse/camel-kie-features/1.0-SNAPSHOT/xml/features
+    features:install -v camel-kie-route
+    ===========
+    -->
+    <!-- 
+    <properties>
+        <pid>com.redhat.services.billing</pid>
+    </properties>
+     -->
+    
+    
+	<dependencies>
+        <dependency>
+            <groupId>com.redhat.fuse</groupId>
+            <artifactId>camel-kie</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+		<dependency>
+		    <groupId>com.redhat.quickstarts.brms6fuse.contracts</groupId>
+		    <artifactId>billing-service-contract</artifactId>
+		    <version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-blueprint</artifactId>
+            <version>${camel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test-blueprint</artifactId>
+            <version>${camel.version}</version>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <version>${camel.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jaxb</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.9</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.12</version>
+		</dependency>
+        
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		
+        <!-- BRMS/Camel integration -->
+        <!-- 
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-spring</artifactId>
+            <version>${brms.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-osgi-integration</artifactId>
+            <version>${brms.version}</version>
+        </dependency>
+         -->
+        <!-- 
+         -->
+
+        <!-- BRMS - execution -->
+		<dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
+            <version>${brms.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-core</artifactId>
+            <version>${brms.version}</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-internal</artifactId>
+            <version>${brms.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-ci</artifactId>
+            <version>${brms.version}</version>
+        </dependency>
+        -->
+	</dependencies>
+	
+	<build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <!-- 
+							org.camel.kie.domain
+             -->
+						<Import-Package>
+                            com.redhat.services.billing.xsd
+                            ,com.redhat.services.billing.domain
+                            
+							,org.apache.aries.blueprint
+							,org.apache.aries.blueprint.ext
+							,org.apache.aries.proxy
+							,org.apache.aries.proxy.weaving
+							,org.camel.kie.maven
+							,org.apache.camel
+							,org.apache.camel.spi
+						    ,org.apache.camel.impl
+							,org.apache.camel.blueprint
+							,org.apache.camel.util
+							,org.apache.camel.model
+							,org.apache.camel.support
+							,org.osgi.service.cm
+							,org.osgi.service.event
+							,org.osgi.service.blueprint.container
+							,org.camel.kie.component
+							,org.camel.kie.executor
+							,org.drools.compiler.lang
+						</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+<!-- 
+ -->
+
+</project>

@@ -1,0 +1,58 @@
+##########################################
+### Ensure Fabric commands are present ###
+##########################################
+
+wait-for-service org.apache.karaf.features.FeaturesService
+
+features:addurl mvn:com.redhat.fuse/camel-kie-features/${pom.version}/xml/features
+
+features:install -v drools-module
+# VERY IMPORTANT: need this because xstream cannot find the drools KieModuleMetaInfo class without it (aught to have an "org.drools.core.rule:=optional" import on xstream - see stack trace below
+dev:dynamic-import 141
+features:install -v camel-kie-route
+
+
+# uninstall xstream - it cannot find the drools classes when dynamically loading them - see stack trace below
+#com.thoughtworks.xstream.mapper.CannotResolveClassException: org.drools.core.rule.KieModuleMetaInfo
+#    at com.thoughtworks.xstream.mapper.DefaultMapper.realClass(DefaultMapper.java:56)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.DynamicProxyMapper.realClass(DynamicProxyMapper.java:55)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.PackageAliasingMapper.realClass(PackageAliasingMapper.java:88)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.ClassAliasingMapper.realClass(ClassAliasingMapper.java:79)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.ArrayMapper.realClass(ArrayMapper.java:74)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.MapperWrapper.realClass(MapperWrapper.java:30)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.mapper.CachingMapper.realClass(CachingMapper.java:45)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.core.util.HierarchicalStreams.readClassType(HierarchicalStreams.java:29)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.core.TreeUnmarshaller.start(TreeUnmarshaller.java:133)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.core.AbstractTreeMarshallingStrategy.unmarshal(AbstractTreeMarshallingStrategy.java:32)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.XStream.unmarshal(XStream.java:1058)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.XStream.unmarshal(XStream.java:1042)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.XStream.fromXML(XStream.java:913)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at com.thoughtworks.xstream.XStream.fromXML(XStream.java:904)[141:org.apache.servicemix.bundles.xstream:1.4.3.1]
+#    at org.drools.core.rule.KieModuleMetaInfo.unmarshallMetaInfos(KieModuleMetaInfo.java:28)[151:org.drools.core:6.0.3.redhat-6]
+#    at org.drools.compiler.kie.builder.impl.AbstractKieModule.getTypesMetaInfo(AbstractKieModule.java:165)[152:org.drools.compiler:6.0.3.redhat-6]
+#    at org.drools.compiler.kie.builder.impl.AbstractKieModule.isTypeDeclaration(AbstractKieModule.java:156)[152:org.drools.compiler:6.0.3.redhat-6]
+#    at org.drools.compiler.kie.builder.impl.AbstractKieModule.getClassesMap(AbstractKieModule.java:147)[152:org.drools.compiler:6.0.3.redhat-6]
+#    at org.drools.compiler.kie.builder.impl.KieModuleKieProject.getClassesMap(KieModuleKieProject.java:79)[152:org.drools.compiler:6.0.3.redhat-6]
+#    at org.drools.compiler.kie.builder.impl.KieModuleKieProject.initClassLoader(KieModuleKieProject.java:66)[152:org.drools.compiler:6.0.3.redhat-6]
+#    at org.drools.compiler.kie.builder.impl.KieModuleKieProject.init(KieModuleKieProject.java:61)[152:org.drools.compiler:6.0.3.redhat-6]
+#    at org.drools.compiler.kie.builder.impl.KieContainerImpl.<init>(KieContainerImpl.java:83)[152:org.drools.compiler:6.0.3.redhat-6]
+#    at org.drools.compiler.kie.builder.impl.KieContainerImpl.<init>(KieContainerImpl.java:87)[152:org.drools.compiler:6.0.3.redhat-6]
+#    at org.drools.compiler.kie.builder.impl.KieServicesImpl.newKieContainer(KieServicesImpl.java:111)[152:org.drools.compiler:6.0.3.redhat-6]
+#    at org.camel.kie.executor.DroolsExecutorMaven.initKieSession(DroolsExecutorMaven.java:40)[154:camel-kie-eclipse:1.0.0.SNAPSHOT]
+#    at org.camel.kie.executor.DroolsExecutor.fireRules(DroolsExecutor.java:39)[154:camel-kie-eclipse:1.0.0.SNAPSHOT]
+#    at org.camel.kie.component.DroolsProducer.process(DroolsProducer.java:20)[154:camel-kie-eclipse:1.0.0.SNAPSHOT]

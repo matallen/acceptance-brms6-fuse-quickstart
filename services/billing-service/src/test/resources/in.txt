@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<call-details>
+    <call duration="300" from="07112284718" fromCountry="GBR" to="07991380132" toCountry="GBR" type="Call"/>
+    <call duration="60" from="07112284718" fromCountry="GBR" to="07857131234" toCountry="GBR" type="Call"/>
+    <call duration="0" from="07112284718" fromCountry="GBR" to="07854250011" toCountry="GBR" type="SMS"/>
+</call-details>

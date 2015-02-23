@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.redhat.quickstarts</groupId>
+        <artifactId>brms6fuse</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <groupId>com.redhat.quickstarts.brms6fuse</groupId>
+    <artifactId>business-rules</artifactId>
+	<packaging>kjar</packaging>
+	<name>${project.groupId}.${project.artifactId}</name>
+    <!--
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<name>Deploy-To-Repo</name>
+			<url>http://localhost:9000/nexus/content/repositories/releases/</url>
+			<uniqueVersion>false</uniqueVersion>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<name>Deploy-To-Repo</name>
+			<url>http://localhost:9000/nexus/content/repositories/snapshots/</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+    -->
+
+	<repositories>
+		<repository>
+			<id>jboss-techpreview</id>
+			<url>http://maven.repository.redhat.com/techpreview/all</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jboss-techpreview-plugins</id>
+			<url>http://maven.repository.redhat.com/techpreview/all</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.kie</groupId>
+				<artifactId>kie-maven-plugin</artifactId>
+				<version>${brms.version}</version>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
+            <version>${brms.version}</version>
+        </dependency>
+        <dependency>
+		    <groupId>com.redhat.quickstarts.brms6fuse.contracts</groupId>
+		    <artifactId>billing-service-contract</artifactId>
+		    <version>${project.version}</version>
+        </dependency>
+        
+	</dependencies>
+
+</project>

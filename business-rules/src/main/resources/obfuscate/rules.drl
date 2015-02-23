@@ -1,0 +1,10 @@
+package obfuscate
+
+rule "obfuscate"
+when
+  $c:com.redhat.services.billing.domain.CallDetails.Call()
+then
+  $c.setTo(
+    $c.getTo().substring(0, $c.getTo().length()-4)+String.format("%4s"," ").replaceAll(" ", "X")
+  );
+end
