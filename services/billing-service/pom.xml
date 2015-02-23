@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<!--
 	I DONT KNOW WHY BUT I HAD TO SEVER THE PARENT ASSOCIATION OTHERWISE THE CAMEL ROUTE WOULDNT START!!!! WEIRD HUH!?
-	I now realise its the kie-BOM that is causing the issue - camel tests fail when the kie-bom is imported
+	I now realise its the kie-BOM that is causing the issue - camel tests fail when the kie-bom is imported - needs further investigation
 	-->
     <parent>
 	    <groupId>com.redhat.quickstarts.brms6fuse</groupId>
@@ -21,18 +21,13 @@
     add this repo to the end of the property "org.ops4j.pax.url.mvn.repositories"
         https://maven.repository.redhat.com/techpreview/all@id=drools.repo
     
-    ===========
-    features:removeurl  mvn:com.redhat.fuse/camel-kie-example-features/1.0-SNAPSHOT/xml/features
-    features:addurl mvn:com.redhat.fuse/camel-kie-features/1.0-SNAPSHOT/xml/features
-    features:install -v camel-kie-route
-    ===========
+    ==== Service Install ====
+    features:addurl mvn:com.redhat.quickstarts.brms6fuse.services/billing-service/1.0-SNAPSHOT/xml/features
+    ==== Feature Install ====
+    features:removeurl mvn:com.redhat.quickstarts.brms6fuse/features/1.0-SNAPSHOT/xml/features
+    features:install -v billing-service
+    =========================
     -->
-    <!-- 
-    <properties>
-        <pid>com.redhat.services.billing</pid>
-    </properties>
-     -->
-    
     
 	<dependencies>
         <dependency>
@@ -159,9 +154,6 @@
 				<configuration>
 					<instructions>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <!-- 
-							org.camel.kie.domain
-             -->
 						<Import-Package>
                             com.redhat.services.billing.xsd
                             ,com.redhat.services.billing.domain
@@ -190,7 +182,5 @@
 			</plugin>
 		</plugins>
 	</build>
-<!-- 
- -->
 
 </project>

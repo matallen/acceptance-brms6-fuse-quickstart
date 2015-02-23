@@ -11,18 +11,7 @@
 	<artifactId>billing-service-contract</artifactId>
 	<packaging>bundle</packaging>
 	<name>${project.groupId}.${project.artifactId}</name>
-<!-- 
-	<properties>
-		<bundle-import-package></bundle-import-package>
-		<bundle-export-package>
-			com.redhat.services.billing.domain.json
-			,com.redhat.services.billing.domain.xsd
-			,com.redhat.services.billing.domain.domain
-		</bundle-export-package>
-		<bundle-private-package></bundle-private-package>
-	</properties>
- -->
-
+    
 	<dependencies>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
@@ -44,7 +33,6 @@
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
-			<!-- attach sources -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -162,28 +150,6 @@
 				</executions>
 			</plugin>
 			-->
-<!-- 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>${basedir}/zip-descriptor.xml</descriptor>
-                    </descriptors>
-                    <finalName>subscriber-service-spec</finalName>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
--->
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>

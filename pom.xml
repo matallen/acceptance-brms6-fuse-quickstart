@@ -27,6 +27,23 @@
         <module>tools</module>
     </modules>
     
+    <!--
+    <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <name>Deploy-To-Repo</name>
+            <url>http://localhost:9000/nexus/content/repositories/releases/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>nexus</id>
+            <name>Deploy-To-Repo</name>
+            <url>http://localhost:9000/nexus/content/repositories/snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+    -->
+    
     <profiles>
         <profile>
             <id>brms-6.0.3.GA</id>

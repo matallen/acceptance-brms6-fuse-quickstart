@@ -10,36 +10,6 @@
     <artifactId>business-rules</artifactId>
 	<packaging>kjar</packaging>
 	<name>${project.groupId}.${project.artifactId}</name>
-    <!--
-	<distributionManagement>
-		<repository>
-			<id>nexus</id>
-			<name>Deploy-To-Repo</name>
-			<url>http://localhost:9000/nexus/content/repositories/releases/</url>
-			<uniqueVersion>false</uniqueVersion>
-		</repository>
-		<snapshotRepository>
-			<id>nexus</id>
-			<name>Deploy-To-Repo</name>
-			<url>http://localhost:9000/nexus/content/repositories/snapshots/</url>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
-	</distributionManagement>
-    -->
-
-	<repositories>
-		<repository>
-			<id>jboss-techpreview</id>
-			<url>http://maven.repository.redhat.com/techpreview/all</url>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>jboss-techpreview-plugins</id>
-			<url>http://maven.repository.redhat.com/techpreview/all</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<build>
 		<plugins>
@@ -63,7 +33,5 @@
 		    <artifactId>billing-service-contract</artifactId>
 		    <version>${project.version}</version>
         </dependency>
-        
 	</dependencies>
-
 </project>
