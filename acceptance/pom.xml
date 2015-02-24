@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <!--
-	# to run acceptance from CI (ie. start containers, deploy apps, run tests and stop containers)
+	# to run BDD Acceptance tests from CI (ie. start containers, deploy apps, run tests and then stop the containers)
 	mvn clean install -Pfuse,acceptance -o
 	
-	# to start containers for Development purposes: 
-	mvn clean package cargo:run -Pbrms,fuse
+    # to start fuse container for BDD Development purposes:
+    mvn clean fusecontainer:run 
 	
     -->
     <modelVersion>4.0.0</modelVersion>
@@ -34,16 +34,12 @@
 			<id>jboss-fuse-releases</id>
 			<url>https://repository.jboss.org/nexus/content/repositories/fs-releases/</url>
 		</repository>
-        <!-- 
+        <!--
 		<repository>
             <id>jboss-fuse-download</id>
             <url>https://repository.jboss.org/nexus/content/groups/ea</url>
         </repository>
-        <repository>
-            <id>jboss-fuse-download</id>
-            <url>http://localhost:9000/nexus/content/repositories/releases</url>
-        </repository>
-         -->
+        -->
 	</repositories>
 	<pluginRepositories>
         <pluginRepository>
@@ -61,7 +57,113 @@
 		</resources>
 	</build-->
     
+    
     <profiles>
+      <profile>
+          <id>coverage</id>
+          <activation>
+              <property>
+                  <name>coverage</name>
+                  <value>true</value>
+              </property>
+          </activation>
+          <build>
+            <plugins>
+            <!--
+              <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.3.201502191951</version>
+                <executions>
+                  <execution>
+                    <id>pre-integration-test</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                      <goal>prepare-agent-integration</goal>
+                    </goals>
+                    <configuration>
+                      <destFile>${project.build.directory}/coverage-data/jacoco.exec</destFile>
+                      <propertyName>failsafeArgLine</propertyName>
+                      <includes>
+                        <include>${project.build.directory}/../../services/billing-service/target/classes</include>
+                        <include>${project.build.directory}/../../contracts/billing-service/target/classes</include>
+                      </includes>
+                    </configuration>
+                  </execution>
+                  <execution>
+                    <id>post-integration-test</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                      <goal>report</goal>
+                    </goals>
+                    <configuration>
+                      <dataFile>${project.build.directory}/coverage-data/jacoco.exec</dataFile>
+                      <outputDirectory>${project.reporting.outputDirectory}/coverage</outputDirectory>
+                    </configuration>
+                  </execution>
+                </executions>
+              </plugin>
+              -->
+                <!-- cobertura cannot execute goals separately, so you cant instrument in pre-int phase and report in post-int phase -->
+                  <!--
+                  <plugin>
+                      <groupId>org.codehaus.mojo</groupId>
+                      <artifactId>cobertura-maven-plugin</artifactId>
+                      <version>2.6</version>
+                      <executions>
+                          <execution>
+                              <id>instrument-classes</id>
+                              <phase>pre-integration-test</phase>
+                              <goals>
+                                  <goal>clean</goal>
+                                  <goal>instrument</goal>
+                              </goals>
+                              <configuration>
+                                  <instrumentation>
+                                    
+                                  </instrumentation>
+                                  <attach>true</attach>
+                              </configuration>
+                          </execution>
+                          <execution>
+                              <id>check-classes</id>
+                              <phase>post-integration-test</phase>
+                              <goals>
+                                  <goal>check</goal>
+                              </goals>
+                              <configuration>
+                                <check>
+                                    <branchRate>85</branchRate>
+                                    <lineRate>85</lineRate>
+                                    <haltOnFailure>true</haltOnFailure>
+                                    <totalBranchRate>85</totalBranchRate>
+                                    <totalLineRate>85</totalLineRate>
+                                    <packageLineRate>85</packageLineRate>
+                                    <packageBranchRate>85</packageBranchRate>
+                                </check>
+                              </configuration>
+                          </execution>
+                      </executions>
+                  </plugin>
+                  -->
+                  <!-- Add cobertura as dependency to the jetty-plugin (required for instrumented classes) -->
+                      <!--
+                  <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-fusecontainer-plugin</artifactId>
+                      <dependencies>
+                          <dependency>
+                              <groupId>org.codehaus.mojo</groupId>
+                              <artifactId>cobertura-maven-plugin</artifactId>
+                              <version>2.6</version>
+                              <type>jar</type>
+                          </dependency>
+                      </dependencies>
+                  </plugin>
+                      -->
+              </plugins>
+          </build>
+      </profile>
         <profile>
             <id>acceptance</id>
             <activation>
@@ -80,6 +182,7 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <version>2.18.1</version>
                         <configuration>
+                            <argLine>${failsafeArgLine}</argLine>
                             <failIfNoTests>true</failIfNoTests>
                             <parallel>none</parallel>
                             <threadCount>1</threadCount>
@@ -252,6 +355,7 @@
         
         <profile>
             <id>brms</id>
+            <activation><activeByDefault>false</activeByDefault></activation>
             <build>
                 <plugins>
                     <plugin>
@@ -541,6 +645,7 @@
             <artifactId>camel-ftp</artifactId>
             <version>${camel.version}</version>
         </dependency>
+
 
     </dependencies>
 </project>

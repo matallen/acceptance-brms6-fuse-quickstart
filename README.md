@@ -48,12 +48,14 @@ mvn clean install -Pfuse,acceptance -o
 cd acceptance
 mvn clean fusecontainer:run
 ```
- * run RunAcceptanceTests class from your IDE
+ * wait for Fuse to start
+ * run RunAcceptanceTests as JUnit test from your IDE
  * edit/change/add to the cucumber bdd scenarios and repeat from step 3
+ * press Ctrl-C to shut down Fuse
 
 
 ### What the profiles do
- * fuse - this uses a custom plugin (in tools) to start and stop a Fuse/Karaf container
+ * fuse - this uses a custom maven plugin (in tools) to start and stop a Fuse/Karaf container
  * acceptance - this runs cucumber BDD tests allowing you to use BDD testing framework with Fuse services/routes
 
 
