@@ -29,24 +29,26 @@
     https://github.com/jboss-integration/fuse-bxms-integ/blob/master/drools-osgi/drools-karaf-features/src/main/filtered-resources/repository/features.xml
     -->
 
+        <!--
 	<repositories>
 		<repository>
 			<id>jboss-fuse-releases</id>
 			<url>https://repository.jboss.org/nexus/content/repositories/fs-releases/</url>
 		</repository>
-        <!--
 		<repository>
             <id>jboss-fuse-download</id>
             <url>https://repository.jboss.org/nexus/content/groups/ea</url>
         </repository>
-        -->
 	</repositories>
-	<pluginRepositories>
+        -->
+	<!-- 
+  <pluginRepositories>
         <pluginRepository>
             <id>central-plugins</id>
             <url>http://repo1.maven.org/maven2</url>
         </pluginRepository>
     </pluginRepositories>
+    -->
     
 	<!--build>
 		<resources>
@@ -59,6 +61,7 @@
     
     
     <profiles>
+            <!--
       <profile>
           <id>coverage</id>
           <activation>
@@ -69,7 +72,6 @@
           </activation>
           <build>
             <plugins>
-            <!--
               <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -160,10 +162,10 @@
                           </dependency>
                       </dependencies>
                   </plugin>
-                      -->
               </plugins>
           </build>
       </profile>
+                      -->
         <profile>
             <id>acceptance</id>
             <activation>
@@ -216,91 +218,20 @@
 			</activation>
             <build>
                 <plugins>
-                    <!-- 
-                     -->
-                    <!--plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>download-fuse</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>org.jboss.fuse</groupId>
-                                            <artifactId>jboss-fuse-minimal</artifactId>
-                                            <version>${jboss-fuse.version}</version>
-                                            <type>zip</type>
-                                            <outputDirectory>${project.build.directory}/container</outputDirectory>
-                                            <overWrite>true</overWrite>
-                                        </artifactItem>
-                                    </artifactItems>
-                                    <stripVersion>true</stripVersion>
-                                    <stripClassifier>true</stripClassifier>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>configure-fuse-users.properties</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <tasks>
-                                        <replace file="${project.build.directory}/container/jboss-fuse-${jboss-fuse.version}/etc/users.properties" token="#admin" value="admin"/>
-                                    </tasks>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin-->
-                    
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-fusecontainer-plugin</artifactId>
                         <version>6.1.1.redhat-412</version>
                         <configuration>
-                            <!-- 
-                            <skip>false</skip>
-                            <clientUsername>admin</clientUsername>
-                            <clientpassword>admin</clientpassword>
-                            -->
                             <clean>true</clean>
                             <debug>false</debug>
                             <fuseHome>${project.build.directory}/container/jboss-fuse-${jboss-fuse.version}</fuseHome>
                             <timeout>90</timeout>
-                            <!-- 
-                            <config>org.ops4j.pax.url.mvn#org.ops4j.pax.url.mvn.repositories=,file://${user.home}/.m2@id=local</config>
-                            -->
-                            <!--
-                            <configs>
-                                <config>org.ops4j.pax.url.mvn#org.ops4j.pax.url.mvn.repositories#https://maven.repository.redhat.com/techpreview/all@id=drools.repo</config>
-                                <config>org.ops4j.pax.url.mvn#org.ops4j.pax.url.mvn.localRepository#/home/mallen/.m2/repository</config>
-                            </configs>
-                            -->
                             <properties>
-                            <!-- 
-                                <property file="org.ops4j.pax.url.mvn" name="org.ops4j.pax.url.mvn.localRepository">/home/mallen/.m2/repository</property>
-                             -->
                                 <org.ops4j.pax.url.mvn_org.ops4j.pax.url.mvn.localRepository>${user.home}/.m2/repository</org.ops4j.pax.url.mvn_org.ops4j.pax.url.mvn.localRepository>
                                 <org.ops4j.pax.url.mvn_org.ops4j.pax.url.mvn.repositories_append>,https://maven.repository.redhat.com/techpreview/all@id=drools.repo</org.ops4j.pax.url.mvn_org.ops4j.pax.url.mvn.repositories_append>
                             </properties>
                                 
-                            <commands>
-                                <!-- 
-                                <command>shell:source mvn:com.redhat.quickstarts.brms6fuse/features/${project.version}/karaf/installer;</command>
-                                <command>shell:source /home/mallen/.m2/repository/com/redhat/fuse/camel-kie-features/1.0-SNAPSHOT/camel-kie-features-1.0-SNAPSHOT-installer.karaf</command>
-                                 -->
-                            </commands>
                             <container>
                                 <groupId>org.jboss.fuse</groupId>
                                 <artifactId>jboss-fuse-minimal</artifactId>
@@ -312,14 +243,6 @@
                             <commands>
                                 <command>shell:source mvn:org.jboss.super.fuse/features/1.0.0-SNAPSHOT/karaf/installer;</command>
                             </commands>
-                            -->
-                            <!--
-                            <container>
-                                <groupId>org.jboss.fuse</groupId>
-                                <artifactId>jboss-fuse-full</artifactId>
-                                <version>${jboss-fuse.version}</version>
-                                <type>zip</type>
-                            </container>
                             -->
                         </configuration>
                         <executions>
@@ -338,16 +261,6 @@
                                 <phase>post-integration-test</phase>
                             </execution>
                         </executions>
-                        <!--
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.karaf.shell</groupId>
-                                <artifactId>org.apache.karaf.shell.console</artifactId>
-                                <version>2.3.0.redhat-611412</version>
-                                <version>2.3.0.redhat-60024</version>
-                            </dependency>
-                        </dependencies>
-                        -->
                     </plugin>
                 </plugins>
             </build>
@@ -466,13 +379,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
+            <version>1.7.2</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr</artifactId>
@@ -508,6 +421,7 @@
             <artifactId>ejb3-persistence</artifactId>
             <version>1.0.2.GA</version>
         </dependency>
+        -->
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java</artifactId>
@@ -546,11 +460,14 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <!-- 
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-core</artifactId>
             <version>5.5.1.fuse-7-061</version>
         </dependency>
+         -->
+        <!--
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
@@ -561,10 +478,12 @@
             <artifactId>junit</artifactId>
             <version>4.11</version>
         </dependency>
+        -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+        <!--
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xerces</artifactId>
@@ -575,6 +494,8 @@
             <artifactId>bcprov-jdk16</artifactId>
             <version>1.45</version>
         </dependency>
+        -->
+        <!--
         <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
@@ -590,11 +511,12 @@
             <artifactId>xmlunit</artifactId>
             <version>1.4</version>
         </dependency>
+        -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.2</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>javax.jms</groupId>
             <artifactId>jms</artifactId>
@@ -610,6 +532,7 @@
             <artifactId>mail</artifactId>
             <version>1.4</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
