@@ -14,6 +14,7 @@ import org.apache.sshd.SshClient;
 
 public class SshClient2 {
   private static final Logger log=Logger.getLogger(SshClient2.class);
+  public static final int KARAF_PORT_DEFAULT=8101;
   private ClientSession session;
   private SshClient client;
   private String host;

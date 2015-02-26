@@ -12,14 +12,13 @@ import org.apache.log4j.Logger;
 import org.junit.Assert;
 
 import com.google.common.base.Preconditions;
-import com.redhat.acceptance.utils.SshClient;
 import com.redhat.acceptance.utils.SshClient2;
 import com.redhat.acceptance.utils.ToHappen;
 import com.redhat.acceptance.utils.Wait;
 
 public abstract class AbstractStepsBase {
   private static final Logger log=Logger.getLogger(AbstractStepsBase.class);
-  private SshClient2 sshClient = new SshClient2("localhost", "admin", "admin", SshClient.KARAF_PORT_DEFAULT);
+  private SshClient2 sshClient = new SshClient2("localhost", "admin", "admin", SshClient2.KARAF_PORT_DEFAULT);
   private static boolean sshClientStarted=false;
   
   public ToHappen untilNoResolvedBundlesExist=new ToHappen() {public boolean hasHappened() {
