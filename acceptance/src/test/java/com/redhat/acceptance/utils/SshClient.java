@@ -1,3 +1,20 @@
+/*
+* JBoss, Home of Professional Open Source
+* Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
+* contributors by the @authors tag. See the copyright.txt in the
+* distribution for a full listing of individual contributors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* http://www.apache.org/licenses/LICENSE-2.0
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package com.redhat.acceptance.utils;
 
 import static org.apache.sshd.SshClient.setUpDefaultClient;
@@ -10,19 +27,19 @@ import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.common.util.NoCloseInputStream;
 import org.apache.sshd.common.util.NoCloseOutputStream;
-import org.apache.sshd.SshClient;
+//import org.apache.sshd.SshClient;
 
-public class SshClient2 {
-  private static final Logger log=Logger.getLogger(SshClient2.class);
+public class SshClient {
+  private static final Logger log=Logger.getLogger(org.apache.sshd.SshClient.class);
   public static final int KARAF_PORT_DEFAULT=8101;
   private ClientSession session;
-  private SshClient client;
+  private org.apache.sshd.SshClient client;
   private String host;
   private String username;
   private String password;
   private int port;
   
-  public SshClient2(String host, String username, String password, int port) {
+  public SshClient(String host, String username, String password, int port) {
     this.host=host;
     this.username=username;
     this.password=password;

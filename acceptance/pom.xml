@@ -5,7 +5,6 @@
 	
     # to start fuse container for BDD Development purposes:
     mvn clean fusecontainer:run 
-	
     -->
     <modelVersion>4.0.0</modelVersion>
     <name>${project.groupId}.${project.artifactId}</name>
@@ -192,34 +191,10 @@
             <artifactId>sshd-core</artifactId>
             <version>0.8.0</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>net.schmizz</groupId>
-            <artifactId>sshj</artifactId>
-            <version>0.10.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.44-1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.karaf.shell</groupId>
-            <artifactId>org.apache.karaf.shell.ssh</artifactId>
-            <version>3.0.0.RC1</version>
-        </dependency>
-        <dependency>
-            <groupId>ognl</groupId>
-            <artifactId>ognl</artifactId>
-            <version>3.0.6</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ftp</artifactId>
             <version>${camel.version}</version>
         </dependency>
-
-
     </dependencies>
 </project>

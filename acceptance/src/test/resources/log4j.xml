@@ -19,7 +19,7 @@
     <logger name="org.apache.sshd">
         <level value="OFF" />
     </logger>
-    <logger name="com.redhat.acceptance.utils">
+    <logger name="com.redhat.acceptance">
         <level value="DEBUG" />
     </logger>
     
