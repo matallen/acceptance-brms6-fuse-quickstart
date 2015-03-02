@@ -6,11 +6,11 @@
 			http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
 			http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
 
-    <cm:property-placeholder id="billing-service-old.properties" persistent-id="com.redhat.services.billing">
+    <cm:property-placeholder id="billing-service.properties" persistent-id="com.redhat.services.billing">
         <cm:default-properties>
             <cm:property name="trace"                       value="false"/>
-            <cm:property name="billing.in"                   value="file://target/billing-service?fileName=in.txt"/>            
-            <cm:property name="billing.out"                  value="file://target/billing-service?fileName=out.txt" />
+            <cm:property name="billing.in"                  value="file://target/billing-service?fileName=in.txt"/>            
+            <cm:property name="billing.out"                 value="file://target/billing-service?fileName=out.txt" />
             <cm:property name="kie.releaseId"               value="com.redhat.quickstarts.brms6fuse:business-rules:1.0-SNAPSHOT" />
             <cm:property name="kie.maven.settings.custom"   value=""/>
         </cm:default-properties>

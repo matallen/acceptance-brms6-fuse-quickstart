@@ -63,6 +63,7 @@ public class SshClient {
       if (!command.endsWith("\n")) command+="\n";
       
       // execute command and block/wait
+      if (session==null) throw new RuntimeException("ssh session is closed unexpectedly");
       ClientChannel channel = session.createShellChannel();
       channel.setIn(new NoCloseInputStream(new ByteArrayInputStream(command.getBytes())));
       ByteArrayOutputStream out=new ByteArrayOutputStream();

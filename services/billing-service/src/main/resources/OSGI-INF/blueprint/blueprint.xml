@@ -7,27 +7,19 @@
       ">
     
 	<camelContext trace="{{trace}}" xmlns="http://camel.apache.org/schema/blueprint" id="BillingService">
-        <dataFormats>
-            <jaxb id="xmlMarshaler" prettyPrint="true" contextPath="com.redhat.services.billing.domain" />
-        </dataFormats>
+		<dataFormats>
+			<jaxb id="xmlMarshaler" prettyPrint="true" contextPath="com.redhat.services.billing.domain" />
+		</dataFormats>
 		<route id="BillingServiceMaskNumbers">
 			<from uri="{{billing.in}}" />
-			<log loggingLevel="INFO" message="Before rule execution  : ${body}"/>
-			<unmarshal ref="xmlMarshaler"/>
-            <log loggingLevel="INFO" message="Using KIE RELEASE ID: {{kie.releaseId}}"/>
-            <to uri="drools:{{kie.releaseId}}?facts=${body.call}&amp;kieBaseName=KBase1&amp;kieMavenSettings={{kie.maven.settings.custom}}"/>
-            <!--
-            method=maven|classpath (default: maven)
+			<log loggingLevel="DEBUG" message="Before rule execution  : ${body}" />
+			<unmarshal ref="xmlMarshaler" />
             
-            -->
-			<log loggingLevel="INFO" message="After rule execution  : ${body}" />
+			<to uri="drools:{{kie.releaseId}}?facts=${body.call}&amp;kieBaseName=KBase1&amp;kieMavenSettings={{kie.maven.settings.custom}}" />
+            
+			<log loggingLevel="DEBUG" message="After rule execution  : ${body}" />
 			<inOnly uri="{{billing.out}}" />
 		</route>
 	</camelContext>
     
-            <!--
-            <to uri="drools:com.redhat.quickstarts.brms6fuse:business-rules:1.0-SNAPSHOT?facts=${body.call}&amp;method=maven&amp;kieBaseName=KBase1&amp;kieMavenSettings=/home/mallen/Work/poc/acceptance-brms6-fuse-quickstart/services/billing-service/src/main/resources/client-settings.xml"/>
-            <to uri="drools:com.redhat.quickstarts.brms6fuse:business-rules:1.0-SNAPSHOT?facts=${body.call}&amp;method=maven&amp;kieBaseName=KBase1"/>
-            <to uri="drools:com.redhat.quickstarts.brms6fuse:business-rules:1.0-SNAPSHOT?facts=${body.call}&amp;method=maven&amp;kieBaseName=KBase1&amp;kieMavenSettings=/home/mallen/Work/poc/camel-kie-example/routes/src/main/resources/client-settings.xml"/>
-            -->
 </blueprint>

@@ -86,6 +86,11 @@
                                 <org.ops4j.pax.url.mvn_org.ops4j.pax.url.mvn.localRepository>${user.home}/.m2/repository</org.ops4j.pax.url.mvn_org.ops4j.pax.url.mvn.localRepository>
                                 <org.ops4j.pax.url.mvn_org.ops4j.pax.url.mvn.repositories_append>,https://maven.repository.redhat.com/techpreview/all@id=drools.repo</org.ops4j.pax.url.mvn_org.ops4j.pax.url.mvn.repositories_append>
                             </properties>
+                            <!--
+                            <etc>
+                                <com.redhat.services.billing.cfg>mvn:com.redhat.quickstarts.brms6fuse.services/billing-service/1.0-SNAPSHOT/local/cfg</com.redhat.services.billing.cfg>
+                            </etc>
+                            -->
                             <container>
                                 <groupId>org.jboss.fuse</groupId>
                                 <artifactId>jboss-fuse-minimal</artifactId>

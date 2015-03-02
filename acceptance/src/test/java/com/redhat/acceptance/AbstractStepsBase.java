@@ -113,28 +113,50 @@ public abstract class AbstractStepsBase {
   // the issue
   public void updateProperty(final String servicePid, final String propertyName, final String value){
     Preconditions.checkArgument(value!=null, "value cannot be null when setting a service property");
-    final String grepCommand="config:list | grep \""+propertyName+" = "+value.replaceAll("\\?", "\\\\\\\\?").replaceAll("\\*", "\\\\*")+"\"";
     log.debug("Setting property [pid="+servicePid+", property="+propertyName+", value="+value+"]");
-    boolean success=Wait.For(14, 3, new ToHappen() {public boolean hasHappened() {
-      executeCommand("propset -p "+servicePid+" "+propertyName+" "+value);
-      String grepResult=executeCommand(grepCommand);
-      return grepResult.length() > 0;
+    
+    final String finalEscapedValue=value.replaceAll("\\?","\\\\?").replaceAll("\\*","\\\\*");
+    final String finalEscapedValue2=value.replaceAll("\\?","\\\\?").replaceAll("\\*","\\\\*")
+        // these escape sequences are for settings variables in propset configs
+        .replaceAll("\\$","\\\\\\$")
+        .replaceAll("\\{","\\\\\\\\\\\\{")
+        .replaceAll("\\}","\\\\\\\\\\\\}")
+        ;
+    
+    String escapedGrepValue=finalEscapedValue;
+    if (finalEscapedValue.contains("$"))
+      // fuse's grep command wont take that variable substitution so we cannot check to see when the setting has been set correctly if it contains a variable
+      // so truncating it is the best we can do
+      escapedGrepValue=finalEscapedValue.substring(0, finalEscapedValue.indexOf("$"));
+    
+    final String grepCommand="config:list | grep \""+propertyName+" = "+escapedGrepValue+"\"";
+    
+    boolean success=Wait.For(5, 1, new ToHappen() {public boolean hasHappened() {
+      executeCommand("propset -p "+servicePid+" "+propertyName+" "+finalEscapedValue2);
+      try {
+        Thread.sleep(1000l);
+      } catch (InterruptedException e) {}
+      return executeCommand(grepCommand).length() > 0;
     }}, "unable to set property [pid="+servicePid+", property="+propertyName+", value="+value+"]");
     if (success)
       log.debug("Property set successfully");
+    
     Assert.assertTrue("Config NOT applied [pid="+servicePid+", property="+propertyName+", value="+value+"]", success);
   }
   
   public String executeCommand(String command) {
-    return getSshClient().executeCommand(command);
+//    System.out.println("IN  >> "+command);
+    String out=getSshClient().executeCommand(command);
+//    System.out.println("OUT >> "+out);
+    return out;
   }
   
   public void uninstallBundle(final String name){
     String response=getSshClient().executeCommand("osgi:list | grep '"+name+"'");
     if (response.length()<=0) return; // couldnt find it
     
-    boolean matches=response.matches(".*\\[([ 0-9]*)\\].*");
-    System.out.println(matches);
+//    boolean matches=response.matches(".*\\[([ 0-9]*)\\].*");
+//    System.out.println(matches);
     
     if (response.indexOf("[")>=0 && response.indexOf("]")>0){// check for invalid response strings
 //    if (response.matches(".*\\[([ 0-9]*)\\].*")){ // check for invalid response strings
@@ -149,7 +171,7 @@ public abstract class AbstractStepsBase {
       log.error("uninstallBundle not attempted - invalid response string from karaf ["+response+"]");
   }
   
-  public File createFile(File file, String contents) throws IOException{
+  public File writeFile(File file, String contents) throws IOException{
     log.debug("creating file ["+file.getPath()+"] with content ["+(contents.length()>50?contents.substring(0,50)+"...":contents)+"]");
     file.getParentFile().mkdirs();
     IOUtils.write(contents.getBytes(), new FileOutputStream(file));
@@ -157,19 +179,21 @@ public abstract class AbstractStepsBase {
   }
   
   public String readFile(final File file) throws FileNotFoundException, IOException{
-    log.debug("checking for file ["+file.getPath()+"]");
+    log.debug("reading file content for ["+file.getPath()+"]");
     boolean exists=Wait.For(10, new ToHappen() {
     public boolean hasHappened() {
       return file.exists();
     }}, "unable to find file ["+file.getPath()+"]");
     if (exists){
       String out=IOUtils.toString(new FileInputStream(file));
+      file.delete(); //cleanup read files so we dont read them multiple times
       return out;
     }else{
       String logOutput=executeCommand("log:display");
-      System.out.println("LOG OUTPUT:\n"+logOutput);
+      log.error("LOG OUTPUT:\n"+logOutput);
       throw new FileNotFoundException("file not found ["+file.getPath()+"]");
     }
   }
+  
   
 }
