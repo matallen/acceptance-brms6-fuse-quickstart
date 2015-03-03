@@ -27,7 +27,7 @@ import cucumber.api.junit.Cucumber;
 @CucumberOptions(
     monochrome = false 
     ,format = {"pretty", "html:target/cucumber", "json:target/cucumber.json"}//, "rerun:target/rerun.txt"}
-    ,tags={"~@wip", "@Billing"}
+    ,tags={"~@wip", "@Billing", "~@Performance"}
     )
 public class RunBillingAcceptanceTests {
   @Test

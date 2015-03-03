@@ -20,78 +20,41 @@ package com.redhat.acceptance.steps;
 import static javax.xml.xpath.XPathConstants.NODE;
 import static javax.xml.xpath.XPathConstants.NUMBER;
 import static javax.xml.xpath.XPathConstants.STRING;
-
-import static net.java.quickcheck.generator.PrimitiveGenerators.longs;
-import static net.java.quickcheck.generator.PrimitiveGenerators.integers;
 import static net.java.quickcheck.generator.PrimitiveGenerators.enumValues;
+import static net.java.quickcheck.generator.PrimitiveGenerators.integers;
+import static net.java.quickcheck.generator.PrimitiveGenerators.longs;
+import static com.redhat.acceptance.steps.BillingServiceSteps.processedFilesFilter;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
 import net.java.quickcheck.collection.Pair;
-import net.java.quickcheck.generator.PrimitiveGenerators;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Range;
 import com.redhat.acceptance.AbstractStepsBase;
-import com.redhat.acceptance.utils.ToHappen;
-import com.redhat.acceptance.utils.Wait;
 
-import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 
 public class BillingServicePerformanceSteps extends AbstractStepsBase{
   private static final Logger log=LoggerFactory.getLogger(BillingServicePerformanceSteps.class);
   private File testFolder=new File("target/billing-service");
-  private Map<String,String> cachedFileContent=new HashMap<String, String>();
-  
-//  private static boolean deployed = false;
-//  @Given("^the billing service is deployed$")
-//  public void the_billing_service_is_deployed() throws Throwable {
-//    deployed=!executeCommand("list | grep billing-service").equals("");
-//    
-//    if (deployed) return;
-//    
-//    log.info(">>> Deploying Service for "+BillingServiceSteps.class.getSimpleName());
-//    
-//    // install feature
-//    executeCommand("features:addUrl mvn:com.redhat.quickstarts.brms6fuse/features/1.0-SNAPSHOT/xml/features");
-//    executeCommand("log:clear");
-//    executeCommand("log:set INFO");
-////    executeCommand("log:set DEBUG com.redhat.services.billing");
-//    
-//    // configure properties for contained acceptance testing
-////    updateProperty("com.redhat.services.billing", "billing.in",  "file://../../../"+testFolder.getPath()+"?fileName=in.txt");
-////    updateProperty("com.redhat.services.billing", "billing.out", "file://../../../"+testFolder.getPath()+"?fileName=out.txt");
-//    updateProperty("com.redhat.services.billing", "billing.in",  "file://../../../"+testFolder.getPath()+"?antInclude=*.txt");
-//    updateProperty("com.redhat.services.billing", "billing.out", "file://../../../"+testFolder.getPath()+"?${file:name.noext}.processed");
-//    
-//    executeCommand("features:install -v billing-service");
-//    uninstallBundle("Drools :: OSGI Integration");
-//    Wait.For(10, untilNoResolvedBundlesExist, "there are still bundles in a resolved state");
-//    
-//    Assert.assertTrue(!executeCommand("list | grep billing-service").equals(""));
-//  }
   
   enum CountryCodes{
     GBR,FRA,DEU,SWE,ITA
@@ -100,21 +63,20 @@ public class BillingServicePerformanceSteps extends AbstractStepsBase{
     SMS,Call
   }
   
-//  private int numberOfFileToGenerate=1;
-  
-  @Given("^(\\d+) billing files arrive with the following call records:$")
-  public void billing_files_arrive_with_the_following_call_records(int numberOfFiles, List<Map<String,String>> table) throws Throwable {
-//    numberOfFileToGenerate=numberOfFiles;
+  @Given("^(\\d+) billing files are generated:$")
+  public void billing_files_are_generated(int numberOfFiles, List<Map<String,String>> table) throws Throwable {
     Assert.assertEquals("Generator constraints should only specify one row", 1, table.size());
     Map<String,String> row=table.get(0);
     //line count
     Pair<String, String> lineCountPair=new Pair<String, String>(row.get("Line Count").split("-")[0], row.get("Line Count").split("-")[1]);
     int lineCount=integers(Integer.parseInt(lineCountPair.getFirst()), Integer.parseInt(lineCountPair.getSecond())).next();
     
-    for(int fileCount=0;fileCount<=numberOfFiles;fileCount++){
+    BillingServiceSteps.fileCount=numberOfFiles;
+    
+    for(int fileCount=1;fileCount<=numberOfFiles;fileCount++){
       List<Map<String,String>> lines=new ArrayList<Map<String,String>>();
       
-      for(int i=0;i<=lineCount;i++){
+      for(int i=1;i<=lineCount;i++){
         Map<String, String> line=new HashMap<String, String>();
         
         // duration
@@ -136,19 +98,45 @@ public class BillingServicePerformanceSteps extends AbstractStepsBase{
     }
   }
   
-  @Then("^the billing files call records should match:$")
-  public void the_billing_file_call_records_should_match(List<Map<String,String>> table) throws Exception{
+  @Then("^all billing files should be processed within (\\d+) seconds$")
+  public void all_billing_files_should_be_processed_within(int timeInSeconds) throws Throwable {
+    File sourceFolder=new File(testFolder, ".camel");
+    File processedFolder=testFolder;
+    
+    FilenameFilter sourceFilesFilter=new FilenameFilter() {public boolean accept(File dir, String name) {
+        return name.endsWith(".txt");
+    }};
+    
+    File[] sourceFiles=sourceFolder.listFiles(sourceFilesFilter);
+    File[] processedFiles=processedFolder.listFiles(processedFilesFilter);
+    
+    Arrays.sort(sourceFiles, new Comparator<File>(){
+      public int compare(File f1, File f2){
+          return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified()); // oldest first
+      }});
+    
+    Arrays.sort(processedFiles, new Comparator<File>(){
+      public int compare(File f1, File f2){
+          return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified()); // newest first
+      }});
+    
+    File oldestSourceFile=sourceFiles[0];
+    File newestProcessedFile=processedFiles[0];
+    
+    long durationInMs=newestProcessedFile.lastModified()-oldestSourceFile.lastModified();
+    long durationInS=durationInMs/1000;
+    Assert.assertTrue(durationInS<timeInSeconds);
+  }
+  
+  @Then("^all billing file call records should match:$")
+  public void all_billing_file_call_records_should_match(List<Map<String,String>> table) throws Exception{
     
     Assert.assertEquals("Comparator constraints should only specify one row", 1, table.size());
     Map<String,String> row=table.get(0);
     
-    FilenameFilter filter=new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        return name.endsWith(".processed");
-      }
-    };
+    File[] files=testFolder.listFiles(processedFilesFilter);
     
-    File[] files=testFolder.listFiles(filter);
+    if (BillingServiceSteps.fileCount!=files.length) throw new AcceptanceException("Tried to find ["+BillingServiceSteps.fileCount+"] files, but found ["+files.length+"] instead");
     
     for(File file:files){
       String content=readFile(file);
@@ -164,9 +152,15 @@ public class BillingServicePerformanceSteps extends AbstractStepsBase{
         String toCountry   =(String) xpath.evaluate("@toCountry",node,STRING);
         String type        =(String) xpath.evaluate("@type",node,STRING);
         
-        Assert.assertTrue(to.matches(row.get("To")));
+        Assert.assertTrue(row.get("To")!=null?to.matches(row.get("To")):true);
+        Assert.assertTrue(row.get("To Country")!=null?toCountry.matches(row.get("ToCountry")):true);
+        Assert.assertTrue(row.get("From")!=null?from.matches(row.get("From")):true);
+        Assert.assertTrue(row.get("From Country")!=null?fromCountry.matches(row.get("From Country")):true);
+        Assert.assertTrue(row.get("Duration")!=null?duration.matches(row.get("Duration")):true);
+        Assert.assertTrue(row.get("Type")!=null?type.matches(row.get("Type")):true);
       }
     }
+    BillingServiceSteps.reset();
   }
   
 }

@@ -153,13 +153,9 @@ public abstract class AbstractStepsBase {
   
   public void uninstallBundle(final String name){
     String response=getSshClient().executeCommand("osgi:list | grep '"+name+"'");
-    if (response.length()<=0) return; // couldnt find it
-    
-//    boolean matches=response.matches(".*\\[([ 0-9]*)\\].*");
-//    System.out.println(matches);
+    if (response.length()<=0) return; // couldn't find the bundle string
     
     if (response.indexOf("[")>=0 && response.indexOf("]")>0){// check for invalid response strings
-//    if (response.matches(".*\\[([ 0-9]*)\\].*")){ // check for invalid response strings
       final String bundleId=response.substring(1,response.indexOf("]")).trim();
       getSshClient().executeCommand("osgi:uninstall "+bundleId);
       boolean success=Wait.For(10, new ToHappen() {
@@ -188,12 +184,22 @@ public abstract class AbstractStepsBase {
       String out=IOUtils.toString(new FileInputStream(file));
       file.delete(); //cleanup read files so we dont read them multiple times
       return out;
-    }else{
-      String logOutput=executeCommand("log:display");
-      log.error("LOG OUTPUT:\n"+logOutput);
-      throw new FileNotFoundException("file not found ["+file.getPath()+"]");
-    }
+    }else
+      throw new AcceptanceException("file not found ["+file.getPath()+"]");
   }
   
+  @SuppressWarnings("serial")
+  public class AcceptanceException extends RuntimeException{
+    public AcceptanceException(Throwable cause) {
+      super(cause);
+      String logOutput=executeCommand("log:display");
+      log.error("LOG OUTPUT:\n"+logOutput);
+    }
+    public AcceptanceException(String message) {
+      super(message);
+      String logOutput=executeCommand("log:display");
+      log.error("LOG OUTPUT:\n"+logOutput);
+    }
+  }
   
 }

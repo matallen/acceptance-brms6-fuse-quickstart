@@ -34,6 +34,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,17 @@ import cucumber.api.java.en.When;
 public class BillingServiceSteps extends AbstractStepsBase{
   private static final Logger log=LoggerFactory.getLogger(BillingServiceSteps.class);
   private File testFolder=new File("target/billing-service");
-  private Map<String,String> cachedContent=new HashMap<String, String>();
+//  private Map<String,String> cachedContent=new HashMap<String, String>();
+  
+  public static FilenameFilter processedFilesFilter=new FilenameFilter() {
+    public boolean accept(File dir, String name) {
+      return name.endsWith(".processed");
+    }
+  };
+  
+  public static void reset(){
+    fileCount=0;
+  }
   
 //  private static boolean initialised = false;
   @Before public void beforeAll(){
@@ -85,7 +96,7 @@ public class BillingServiceSteps extends AbstractStepsBase{
     Assert.assertTrue(!executeCommand("list | grep billing-service").equals(""));
   }
   
-  static int fileCount=0;
+  public static int fileCount=0;
   
   @Given("^a billing file arrives with the following call records:$")
   public void a_billing_file_arrives_with_the_following_call_records(List<Map<String,String>> table) throws Throwable {
@@ -106,38 +117,40 @@ public class BillingServiceSteps extends AbstractStepsBase{
   
   @When("^the billing files have been processed$")
   public void the_billing_file_is_processed() throws Throwable {
+    log.debug("Watching for "+fileCount+" files matching \""+testFolder.getPath()+"/*.processed\"");
     
-    final FilenameFilter processedFileFilter=new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        return name.endsWith(".processed");
-    }};
-    
-    log.debug("Watching for *.processed files");
-    
-    boolean success=Wait.For(10, new ToHappen() {
+    boolean success=Wait.For(30, new ToHappen() {
       public boolean hasHappened() {
-        return testFolder.listFiles(processedFileFilter).length==fileCount;
+        int filesFound=testFolder.listFiles(processedFilesFilter).length;
+//        log.debug("files found = "+filesFound +" ("+(filesFound==fileCount)+")");
+        return filesFound==fileCount;
     }}, "Timed out waiting for "+fileCount+" output files to appear in "+testFolder.getPath());
     
-    if (!success){
-      String logOutput=executeCommand("log:display");
-      log.error("LOG OUTPUT:\n"+logOutput);
-      throw new RuntimeException("Failed waiting for "+fileCount+" *.processed files");
-    }
+    if (!success)
+      throw new AcceptanceException("Failed waiting for "+fileCount+" *.processed files");
     
-    File[] files=testFolder.listFiles(processedFileFilter);
+//    File[] files=testFolder.listFiles(processedFilesFilter);
     
-    log.debug("Found "+files.length+" file(s)");
-    for(File file:files){
-      log.debug("  "+file.getName());
-      String content=readFile(file);
-      cachedContent.put(file.getPath(), content);
-    }
+//    log.debug("Found "+files.length+" file(s)");
+//    for(File file:files){
+////      log.debug("  "+file.getName());
+//      String content=readFile(file);
+//      cachedContent.put(file.getPath(), content);
+//    }
   }
-  
   
   @Then("^the billing file call records should match:$")
   public void the_billing_file_call_records_should_match(List<Map<String,String>> table) throws Exception{
+    // read all the files
+    Map<String,String> cachedContent=new HashMap<String, String>();
+    File[] files=testFolder.listFiles(processedFilesFilter);
+    for(File file:files){
+      String content=readFile(file);
+      cachedContent.put(file.getPath(), content);
+    }
+    
+    Assert.assertEquals(fileCount, cachedContent.size());
+    
     
     for(Entry<String, String> e:cachedContent.entrySet()){
       String filename=e.getKey();
@@ -176,6 +189,7 @@ public class BillingServiceSteps extends AbstractStepsBase{
         log.debug("assertion successful - "+expectedCall);
       }
     }
+    reset();
   }
   
   public static String comparableCall(String duration, String from, String fromCountry, String to, String toCountry, String type) {
