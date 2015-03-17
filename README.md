@@ -35,7 +35,7 @@ cd ..
  * Download Fuse distribution from Red Hat Customer Support Portal
  * Install Fuse distribution into local repository:
 ```
-./install-fuse-into-maven-locally.sh jboss-fuse-full-6.1.1.redhat-412.zip
+./install-fuse-into-maven-locally.sh jboss-fuse-minimal-6.1.1.redhat-412.zip
 ```
  * Build the whole project
 ```
