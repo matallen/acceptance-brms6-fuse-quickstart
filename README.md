@@ -3,8 +3,10 @@
 
 ### Concept
 
-To enable you to write BDD tests against Fuse/Karaf, and (optionally) for routes to execute BRMS-6.x rules.
+To enable you to integrate BRMS 6.x (Drools) rules in a Camel route deployed on Fuse 6.1/Karaf.  Optionally, a 
+BDD module (called acceptance) has also been provided to enable you to write BDD tests against Camel/Fuse routes.
 
+You can:
  * Build and unit test your business rules (business-rules)
  * Build and test your fuse routes (contracts and services)
  * Define your features file to install services (features)
