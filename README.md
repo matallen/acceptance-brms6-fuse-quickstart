@@ -45,7 +45,7 @@ mvn clean install
 ### To run acceptance tests from Jenkins
 ```
 cd acceptance
-mvn clean install -Pfuse,acceptance -o
+mvn clean install -Pfuse,acceptance
 ```
 
 ### To develop your acceptance tests locally
