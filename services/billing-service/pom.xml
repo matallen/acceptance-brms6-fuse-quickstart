@@ -104,51 +104,9 @@
 	</dependencies>
 	
 	<build>
-            <!-- 
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/config</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-             -->
 		<plugins>
             <!--
-            <plugin>
-              <groupId>org.jacoco</groupId>
-              <artifactId>jacoco-maven-plugin</artifactId>
-              <version>0.7.3.201502191951</version>
-              <executions>
-                <execution>
-                  <id>pre-integration-test</id>
-                  <phase>pre-integration-test</phase>
-                  <goals>
-                    <goal>prepare-agent</goal>
-                  </goals>
-                  <configuration>
-                    <destFile>${project.build.directory}/coverage-reports/jacoco.exec</destFile>
-                    <propertyName>failsafeArgLine</propertyName>
-                  </configuration>
-                </execution>
-                <execution>
-                  <id>post-integration-test</id>
-                  <phase>post-integration-test</phase>
-                  <goals>
-                    <goal>report</goal>
-                  </goals>
-                  <configuration>
-                    <dataFile>${project.build.directory}/coverage-reports/jacoco.exec</dataFile>
-                    <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-            -->
-            <!--
+            Recommend having a config properties file per service to make CI/CD easier by deploying your environment specific config
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>

@@ -17,9 +17,6 @@
     </properties>
     
     <modules>
-        <!-- 
-        <module>rule-domain</module>
-         -->
         <module>business-rules</module>
         <module>features</module>
         <module>services</module>
@@ -45,46 +42,6 @@
     -->
     
     <profiles>
-    <!-- 
-    attempting this: http://mojo.codehaus.org/cobertura-maven-plugin/instrumentingDeploymentArtifact.html
-    <profile>
-            <id>instrument</id>
-            <activation><activeByDefault>false</activeByDefault></activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>cobertura-maven-plugin</artifactId>
-                        <version>2.6</version>
-                        <configuration>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>instrument-code</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>instrument</goal>
-                                </goals>
-                                <configuration>
-                                    <attach>true</attach>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <dependencies>
-              <dependency>
-                  <groupId>net.sourceforge.cobertura</groupId>
-                  <artifactId>cobertura-runtime</artifactId>
-                  <version>2.0.3</version>
-                  <scope>provided</scope>
-                  <type>pom</type>
-              </dependency>
-            </dependencies>
-        </profile>
-     -->
-    
         <profile>
             <id>brms-6.0.3.GA</id>
             <activation><activeByDefault>true</activeByDefault></activation>
@@ -93,7 +50,8 @@
             </properties>
             <dependencyManagement>
                 <dependencies>
-    <!--
+                    <!--
+                    SEE billing-service for why this is commented out. It still needs investigating
                     <dependency>
                         <groupId>org.kie</groupId>
                         <artifactId>kie-bom</artifactId>
@@ -101,7 +59,7 @@
                         <type>pom</type>
                         <scope>import</scope>
                     </dependency>
-    -->
+                    -->
                     <dependency>
                         <groupId>org.antlr</groupId>
                         <artifactId>antlr-runtime</artifactId>
@@ -147,6 +105,7 @@
             <url>https://repository.jboss.org/nexus/content/repositories/fs-releases/</url>
         </repository>
     </repositories>
+    
     <pluginRepositories>
         <pluginRepository>
             <id>central-plugins</id>
@@ -248,36 +207,5 @@
                 </executions>
             </plugin>
         </plugins>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
-        <!-- 
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.kie</groupId>
-                                        <artifactId>kie-maven-plugin</artifactId>
-                                        <versionRange>[6.0.3-redhat-6,)</versionRange>
-                                        <goals>
-                                            <goal>build</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-         -->
     </build>
 </project>

@@ -53,7 +53,6 @@ import cucumber.api.java.en.When;
 public class BillingServiceSteps extends AbstractStepsBase{
   private static final Logger log=LoggerFactory.getLogger(BillingServiceSteps.class);
   private File testFolder=new File("target/billing-service");
-//  private Map<String,String> cachedContent=new HashMap<String, String>();
   
   public static FilenameFilter processedFilesFilter=new FilenameFilter() {
     public boolean accept(File dir, String name) {
@@ -122,21 +121,11 @@ public class BillingServiceSteps extends AbstractStepsBase{
     boolean success=Wait.For(30, new ToHappen() {
       public boolean hasHappened() {
         int filesFound=testFolder.listFiles(processedFilesFilter).length;
-//        log.debug("files found = "+filesFound +" ("+(filesFound==fileCount)+")");
         return filesFound==fileCount;
     }}, "Timed out waiting for "+fileCount+" output files to appear in "+testFolder.getPath());
     
     if (!success)
       throw new AcceptanceException("Failed waiting for "+fileCount+" *.processed files");
-    
-//    File[] files=testFolder.listFiles(processedFilesFilter);
-    
-//    log.debug("Found "+files.length+" file(s)");
-//    for(File file:files){
-////      log.debug("  "+file.getName());
-//      String content=readFile(file);
-//      cachedContent.put(file.getPath(), content);
-//    }
   }
   
   @Then("^the billing file call records should match:$")
@@ -150,7 +139,6 @@ public class BillingServiceSteps extends AbstractStepsBase{
     }
     
     Assert.assertEquals(fileCount, cachedContent.size());
-    
     
     for(Entry<String, String> e:cachedContent.entrySet()){
       String filename=e.getKey();
