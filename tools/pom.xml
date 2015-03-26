@@ -12,8 +12,8 @@
     <name>${project.groupId}.${project.artifactId}</name>
     
     <modules>
-        <module>camel-kie-example/camel-kie</module>
-        <module>camel-kie-example/features</module>
+        <module>camel-kie/camel-kie</module>
+        <module>camel-kie/features</module>
         <module>maven-fusecontainer-plugin</module>
     </modules>
 </project>
