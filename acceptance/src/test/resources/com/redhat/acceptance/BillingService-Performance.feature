@@ -1,4 +1,6 @@
-@Billing @Performance
+@Billing
+@Performance
+@Set1
 
 Feature: Billing Service - Performance tests
 

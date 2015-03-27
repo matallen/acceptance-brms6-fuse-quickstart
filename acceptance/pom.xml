@@ -19,9 +19,48 @@
     <properties>
         <cucumber.version>1.2.2</cucumber.version>
         <jboss-fuse.version>6.1.1.redhat-412</jboss-fuse.version>
+        <set>All</set>
     </properties>
     
     <profiles>
+        <!--profile>
+            <id>set1</id>
+	        <activation>
+	            <activeByDefault>false</activeByDefault>
+	        </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.18.1</version>
+                        <configuration>
+                            <failIfNoTests>true</failIfNoTests>
+                            <parallel>none</parallel>
+                            <threadCount>1</threadCount>
+                            <includes>
+                                <include>**/*RunAcceptanceSet1Tests.java</include>
+                            </includes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>verify</id>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile-->
+        
+        
         <profile>
             <id>acceptance</id>
             <activation>
@@ -40,12 +79,11 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <version>2.18.1</version>
                         <configuration>
-                            <argLine>${failsafeArgLine}</argLine>
                             <failIfNoTests>true</failIfNoTests>
                             <parallel>none</parallel>
                             <threadCount>1</threadCount>
                             <includes>
-                                <include>**/*RunAcceptanceTests.java</include>
+                                <include>**/*Run${set}AcceptanceTests.java</include>
                             </includes>
                         </configuration>
                         <executions>

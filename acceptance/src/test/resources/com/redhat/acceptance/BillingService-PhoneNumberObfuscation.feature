@@ -1,4 +1,5 @@
 @Billing
+@Set2
 
 Feature: Billing Service - Obfuscate phone numbers
 
